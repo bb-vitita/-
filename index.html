@@ -20,7 +20,7 @@
 </head>
 <body>
   <div class="card">
-    <h1>📋 ระบบเช็คชื่อ <span class="tag" id="countTag"></span></h1>
+    <h1> เช็คชื่อ <span class="tag" id="countTag"></span></h1>
 
     <div class="row">
       <input id="nameInput" placeholder="พิมพ์ชื่อ เช่น แบม" list="nameList" />
@@ -34,11 +34,11 @@
 
     <div class="cols">
       <div>
-        <strong>✅ มาแล้ว</strong>
+        <strong> มาแล้ว</strong>
         <ul id="arrived"></ul>
       </div>
       <div>
-        <strong>⏳ ยังไม่มา</strong>
+        <strong> ยังไม่มา</strong>
         <ul id="missing"></ul>
       </div>
     </div>
@@ -60,40 +60,45 @@
     const missingEl = document.getElementById("missing");
     const countTag = document.getElementById("countTag");
 
-    // เติม autocomplete รายชื่อ
-    const dl = document.getElementById("nameList");
-    sairahas.forEach(n => {
-      const opt = document.createElement("option");
-      opt.value = n;
-      dl.appendChild(opt);
-    });
+   function renderNameList() {
+  const dl = document.getElementById("nameList");
+  dl.innerHTML = ""; // ล้างของเก่า
 
+  const missing = sairahas.filter(n => !checkedIn.has(n));
+
+  missing.forEach(n => {
+    const opt = document.createElement("option");
+    opt.value = n;
+    dl.appendChild(opt);
+  });
+}
     function save() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify([...checkedIn]));
     }
 
-    function render() {
-      arrivedEl.innerHTML = "";
-      missingEl.innerHTML = "";
+   function render() {
+  arrivedEl.innerHTML = "";
+  missingEl.innerHTML = "";
 
-      const arrived = sairahas.filter(n => checkedIn.has(n));
-      const missing = sairahas.filter(n => !checkedIn.has(n));
+  const arrived = sairahas.filter(n => checkedIn.has(n));
+  const missing = sairahas.filter(n => !checkedIn.has(n));
 
-      arrived.forEach(n => {
-        const li = document.createElement("li");
-        li.textContent = n;
-        arrivedEl.appendChild(li);
-      });
+  arrived.forEach(n => {
+    const li = document.createElement("li");
+    li.textContent = n;
+    arrivedEl.appendChild(li);
+  });
 
-      missing.forEach(n => {
-        const li = document.createElement("li");
-        li.textContent = n;
-        missingEl.appendChild(li);
-      });
+  missing.forEach(n => {
+    const li = document.createElement("li");
+    li.textContent = n;
+    missingEl.appendChild(li);
+  });
 
-      countTag.textContent = `${arrived.length}/${sairahas.length} มาแล้ว`;
-    }
+  countTag.textContent = `${arrived.length}/${sairahas.length} มาแล้ว`;
 
+  renderNameList(); // ⭐ เพิ่มบรรทัดนี้
+}
     function setMessage(text) {
       msg.textContent = text;
     }
@@ -109,7 +114,7 @@
       } else {
         checkedIn.add(name);
         save();
-        setMessage(`เช็คชื่อ ${name} เรียบร้อย ✅`);
+        setMessage(`เช็คชื่อ ${name} เรียบร้อย `);
         render();
       }
 
